@@ -35,7 +35,7 @@ class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStat
   }
 
   void _navigateToHome() async {
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(Duration(seconds: 200));
     context.push(RouteNameConstants.homeSR);
   }
 
