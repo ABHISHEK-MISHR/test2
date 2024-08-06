@@ -2,7 +2,9 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+//    id 'com.google.gms.google-services'
 }
+//apply plugin: 'com.google.gms.google-services'
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
@@ -43,8 +45,8 @@ android {
     compileSdkVersion 34
 
     defaultConfig {
-        applicationId "androidx.test.runner.AndroidJUnitRunner"
-        minSdkVersion 21
+        applicationId "com.example.test2"
+        minSdkVersion 24
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -65,4 +67,8 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+//    implementation platform('com.google.firebase:firebase-bom:32.5.0')
+//    implementation 'com.google.firebase:firebase-analytics'
+//    implementation 'androidx.multidex:multidex:2.0.1'
+}

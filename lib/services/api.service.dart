@@ -96,8 +96,5 @@ class ApiClient extends BaseChangeNotifierProvider {
       rethrow;
     }
   }
-
-
-
-
 }
+

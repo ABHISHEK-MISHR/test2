@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:test2/auth_provider/auth_provider.dart';
+import 'package:test2/auth_repo/auth_repo.dart';
 import 'package:test2/provider/global_provider.dart';
 import 'package:test2/services/api.service.dart';
 import 'package:test2/services/api_client.dart';
@@ -20,13 +22,12 @@ void runMain() async {
     initialSetup();
     final router = routeConfigFromGoRouter;
     final apiClient = ApiClient();
-    // final authProvider = AuthProvider(
-    //     authRepo: AuthRepo(apiClient: apiClient),
-    //     userRepo: UserRepo(apiClient: apiClient),
-    //     easyfoneRegistrationRepo: EasyfoneRegistrationRepo(apiClient: apiClient)
-    // );
+    final authProvider = AuthProvider(
+      authRepo: AuthRepo(apiClient: apiClient),
+    );
+
     apiClient.initHttpClient(ApiHttpClient(
-        // authProvider
+        authProvider
         ));
 
     final globalStore = GlobalStore(
@@ -34,7 +35,6 @@ void runMain() async {
       navigatorKey: router.routerDelegate.navigatorKey,
       // configRepo: ConfigRepo(apiClient: apiClient),
     );
-
 
     // authProvider.populateGlobalStore(globalStore);
     SnackBarHelper.instance.init(globalStore);
@@ -45,9 +45,8 @@ void runMain() async {
       // deviceProvider: deviceProvider,
       routeConfig: router,
       apiClient: apiClient,
-      // authProvider: authProvider,
+      authProvider: authProvider,
     ));
-
   }, (error, stack) {});
 }
 
@@ -59,31 +58,32 @@ Future<void> initialSetup() async {
   }
 }
 
-
-
 class CTMainApp extends StatelessWidget {
-  const CTMainApp(
-      {super.key,
-        required this.globalStore,
-        required this.routeConfig,
-        // required this.deviceProvider,
-        // required this.syncProvider,
-        required this.apiClient,
-        // required this.authProvider
-      });
+  const CTMainApp({
+    super.key,
+    required this.globalStore,
+    required this.routeConfig,
+    // required this.deviceProvider,
+    // required this.syncProvider,
+    required this.apiClient,
+    required this.authProvider
+  });
+
   final GlobalStore globalStore;
-  // final AuthProvider authProvider;
+
+  final AuthProvider authProvider;
   // final SyncProvider syncProvider;
   // final EasyfoneRegisteredDeviceProvider deviceProvider;
   final GoRouter routeConfig;
   final ApiClient apiClient;
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: globalStore),
         ChangeNotifierProvider.value(value: apiClient),
-        // ChangeNotifierProvider.value(value: authProvider),
+        ChangeNotifierProvider.value(value: authProvider),
         // ChangeNotifierProvider.value(value: syncProvider),
         // ChangeNotifierProvider.value(value: deviceProvider),
       ],
@@ -99,48 +99,48 @@ class CTMainApp extends StatelessWidget {
                 if (Platform.isIOS)
                   KeyboardVisibilityBuilder(
                       builder: (context, isKeyboardVisible) {
-                        final visible = isKeyboardVisible && keyboardHeight > 0;
-                        if (!visible) {
-                          return const SizedBox();
-                        }
-                        return Positioned(
-                          bottom: keyboardHeight,
-                          left: 0,
-                          right: 0,
-                          child: ValueListenableBuilder(
-                              valueListenable:
+                    final visible = isKeyboardVisible && keyboardHeight > 0;
+                    if (!visible) {
+                      return const SizedBox();
+                    }
+                    return Positioned(
+                      bottom: keyboardHeight,
+                      left: 0,
+                      right: 0,
+                      child: ValueListenableBuilder(
+                          valueListenable:
                               ShouldUpdateUIHelper.updateKeyboardType,
-                              builder: (context, k, _) {
-                                if (k != TextInputType.number &&
-                                    k != TextInputType.phone) {
-                                  return const SizedBox();
-                                }
-                                return Container(
-                                  height: 40,
-                                  color: Colors.grey[200],
-                                  padding: EdgeInsets.only(
-                                      bottom:
+                          builder: (context, k, _) {
+                            if (k != TextInputType.number &&
+                                k != TextInputType.phone) {
+                              return const SizedBox();
+                            }
+                            return Container(
+                              height: 40,
+                              color: Colors.grey[200],
+                              padding: EdgeInsets.only(
+                                  bottom:
                                       MediaQuery.of(context).padding.bottom),
-                                  child: SafeArea(
-                                    top: false,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        TextButton(
-                                          child: const Text(
-                                            "Done",
-                                          ),
-                                          onPressed: () {
-                                            Focus.of(context).unfocus();
-                                          },
-                                        ),
-                                      ],
+                              child: SafeArea(
+                                top: false,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    TextButton(
+                                      child: const Text(
+                                        "Done",
+                                      ),
+                                      onPressed: () {
+                                        Focus.of(context).unfocus();
+                                      },
                                     ),
-                                  ),
-                                );
-                              }),
-                        );
-                      }),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                    );
+                  }),
               ],
             ),
           );
